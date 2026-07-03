@@ -392,152 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentSection = null;
 
   // ═══════════════════════════════════════════════════
-  // 8-BIT PIXEL DISSOLVE TRANSITION ENGINE
-  // ═══════════════════════════════════════════════════
-
-  // Inject a canvas into the overlay
-  const canvas = document.createElement('canvas');
-  canvas.id = 'transition-canvas';
-  transition.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-
-  const BLOCK        = 18;     // px — size of each 8-bit "pixel"
-  const FRAMES_COVER = 70;     // frames to cover screen  (higher = slower)
-  const HOLD_MS      = 0;     // pause between cover→clear
-
-  // Retro colour palette for the dissolve blocks
-  const PALETTE = [
-  '#090705',
-  '#0f0906',
-  '#17100d',
-  '#2a1b14',
-  '#4b2d20',
-  '#8c5a33',
-  '#b97a45',
-  '#e2b36c'
-];
-
-  /**
-   * Fisher-Yates shuffle (in-place).
-   */
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  /**
-   * Build block list ordered along diagonals (top-left → bottom-right),
-   * with a little shuffle inside each band for a ragged 8-bit edge.
-   * Pass reverse=true to sweep from the opposite corner.
-   */
-  function diagonalOrder(cols, rows, reverse = false) {
-    const maxDiag = (cols - 1) + (rows - 1);
-    const bands   = Array.from({ length: maxDiag + 1 }, () => []);
-
-    for (let r = 0; r < rows; r++)
-      for (let c = 0; c < cols; c++)
-        bands[c + r].push([c, r]);
-
-    // Shuffle within each diagonal band → ragged pixel edge
-    bands.forEach(band => shuffle(band));
-
-    const ordered = bands.flat();
-    return reverse ? ordered.reverse() : ordered;
-  }
-
-  function pixelTransition(callback) {
-  return new Promise(resolve => {
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const cols = Math.ceil(canvas.width / BLOCK);
-    const rows = Math.ceil(canvas.height / BLOCK);
-
-    const blocks = diagonalOrder(cols, rows, false);
-
-    transition.classList.add("active");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Controls how thick the conveyor belt is
-    const BELT = Math.floor(blocks.length * 0.75);
-
-    // Animation speed
-    const STEP = Math.ceil(blocks.length / 75);
-
-    let front = 0;
-    let swapped = false;
-
-    function animate() {
-
-      // Draw new blocks
-      const drawEnd = Math.min(front, blocks.length);
-
-      for (let i = Math.max(0, drawEnd - STEP); i < drawEnd; i++) {
-
-        const [c, r] = blocks[i];
-
-        const idx = Math.min(
-          PALETTE.length - 1,
-          Math.floor(Math.pow(Math.random(), 2.2) * PALETTE.length)
-        );
-
-        ctx.fillStyle = PALETTE[idx];
-        ctx.fillRect(
-          c * BLOCK - 1,
-          r * BLOCK - 1,
-          BLOCK + 2,
-          BLOCK + 2
-        );
-      }
-
-      // Page swap when everything is covered
-      if (!swapped && front >= blocks.length) {
-        swapped = true;
-        callback();
-      }
-
-      // Erase blocks after the belt passes
-      if (front > BELT) {
-
-        const eraseEnd = Math.min(front - BELT, blocks.length);
-
-        for (let i = Math.max(0, eraseEnd - STEP); i < eraseEnd; i++) {
-
-          const [c, r] = blocks[i];
-
-          ctx.clearRect(
-            c * BLOCK - 1,
-            r * BLOCK - 1,
-            BLOCK + 2,
-            BLOCK + 2
-          );
-        }
-      }
-
-      front += STEP;
-
-      if (front <= blocks.length + BELT) {
-        requestAnimationFrame(animate);
-      } else {
-
-        transition.classList.remove("active");
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-
-        resolve();
-      }
-
-    }
-
-    requestAnimationFrame(animate);
-
-  });
-}
-
-  // ═══════════════════════════════════════════════════
   // NAVIGATION HELPERS
   // ═══════════════════════════════════════════════════
 
@@ -548,45 +402,65 @@ document.addEventListener('DOMContentLoaded', () => {
     currentSection = sectionId;
     const content = sectionData[sectionId]?.content[heading] || '<p>Coming soon!</p>';
 
-    pixelTransition(() => {
-      detailTitle.textContent = heading;
-      detailContent.innerHTML = content;
+    detailTitle.textContent = heading;
+    detailContent.innerHTML = content;
+
+    transition.classList.add('active');
+    setTimeout(() => {
       subPages[sectionId].classList.remove('active');
       detailPage.classList.add('active');
-    });
+      setTimeout(() => transition.classList.remove('active'), 100);
+    }, 200);
   }
 
   /**
    * Navigate from detail page back to the parent sub-page.
    */
   function navigateBack() {
-    pixelTransition(() => {
+    transition.classList.add('active');
+    setTimeout(() => {
       detailPage.classList.remove('active');
       if (currentSection) subPages[currentSection].classList.add('active');
-    });
+      setTimeout(() => transition.classList.remove('active'), 100);
+    }, 200);
   }
 
   /**
    * Navigate from homepage to a sub-page.
+   * Uses a brief transition overlay for polish.
    */
   function navigateTo(pageId) {
     const page = subPages[pageId];
     if (!page) return;
 
-    pixelTransition(() => {
+    // Brief transition flash
+    transition.classList.add('active');
+
+    setTimeout(() => {
       homepage.classList.remove('active');
       page.classList.add('active');
-    });
+
+      setTimeout(() => {
+        transition.classList.remove('active');
+      }, 100);
+    }, 200);
   }
 
   /**
    * Navigate from any sub-page back to homepage.
    */
   function navigateHome() {
-    pixelTransition(() => {
+    transition.classList.add('active');
+
+    setTimeout(() => {
+      // Hide all sub-pages
       Object.values(subPages).forEach(p => p.classList.remove('active'));
       homepage.classList.add('active');
-    });
+
+      setTimeout(() => {
+        transition.classList.remove('active');
+      }, 100);
+    }, 200);
   }
 
 });
