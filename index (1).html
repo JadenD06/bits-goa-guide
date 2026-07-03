@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="BITS Goa Freshman Guide — Your complete introduction to life at BITS Pilani, Goa Campus." />
+  <title>BITS Goa — Freshman Guide</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="assets/logo.png"   as="image" />
+  <link rel="preload" href="assets/screen.png" as="image" />
+  <link rel="preload" href="assets/letter.png" as="image" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       TRANSITION OVERLAY
+       ═══════════════════════════════════════════ -->
+  <div id="page-transition" class="page-transition"></div>
+
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 1 — RETRO BOOT SCREEN
+       ═══════════════════════════════════════════ -->
+  <div id="boot-screen">
+    <img src="assets/logo.png" alt="BITS Pilani Logo" class="boot-logo" />
+
+    <p class="boot-text">
+      <span>BITS GOA</span> FRESHMAN GUIDE v1.0
+    </p>
+
+    <div class="progress-container">
+      <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <p id="progress-percent" class="progress-percent">0%</p>
+
+    <p id="boot-status" class="boot-status">Initializing...</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 2 — MAIN HOMEPAGE
+       ═══════════════════════════════════════════ -->
+  <div id="homepage">
+    <div class="homepage-wrapper">
+      <!-- Background beach image -->
+      <img id="homepage-bg" src="assets/screen.png" alt="BITS Goa Beach Map" class="homepage-bg" />
+
+      <!-- Hotspot overlay — positioned to match the rendered image -->
+      <div id="hotspot-layer" class="hotspot-layer">
+
+        <!--
+          Hotspot positions (% of the IMAGE, not viewport).
+          Carefully calibrated to the bottle + label positions
+          in screen.png at native 9:16 resolution.
+
+          Layout in image:
+            Row 1 (~26–35%): acads (left)     | campus life (right)
+            Row 2 (~42–51%): clubs & depts    | sports and food
+            Row 3 (~57–66%): contact info     | fests & programs
+            Row 4 (~73–83%): resources        | misc
+        -->
+
+        <!-- Row 1: acads | campus life -->
+        <div class="hotspot" data-target="acads"
+             style="left: 5%; top: 29%; width: 40%; height: 11%;"
+             title="Acads" id="hotspot-acads"></div>
+
+        <div class="hotspot" data-target="campus-life"
+             style="left: 52%; top: 29%; width: 44%; height: 11%;"
+             title="Campus Life" id="hotspot-campus-life"></div>
+
+        <!-- Row 2: clubs & depts | sports and food -->
+        <div class="hotspot" data-target="clubs-depts"
+             style="left: 5%; top: 46%; width: 40%; height: 12%;"
+             title="Clubs & Depts" id="hotspot-clubs-depts"></div>
+
+        <div class="hotspot" data-target="sports-food"
+             style="left: 52%; top: 46%; width: 44%; height: 12%;"
+             title="Sports and Food" id="hotspot-sports-food"></div>
+
+        <!-- Row 3: contact info | fests & programs -->
+        <div class="hotspot" data-target="contact-info"
+             style="left: 5%; top: 62%; width: 40%; height: 12%;"
+             title="Contact Info" id="hotspot-contact-info"></div>
+
+        <div class="hotspot" data-target="fests-programs"
+             style="left: 52%; top: 62%; width: 44%; height: 12%;"
+             title="Fests & Programs" id="hotspot-fests-programs"></div>
+
+        <!-- Row 4: resources | misc -->
+        <div class="hotspot" data-target="resources"
+             style="left: 5%; top: 78%; width: 40%; height: 12%;"
+             title="Resources" id="hotspot-resources"></div>
+
+        <div class="hotspot" data-target="misc"
+             style="left: 52%; top: 78%; width: 44%; height: 12%;"
+             title="Misc" id="hotspot-misc"></div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       PHASE 3 — SUB-PAGES
+       ═══════════════════════════════════════════ -->
+
+  <!-- 1. Acads -->
+  <div id="page-acads" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Acads</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Campus Life -->
+  <div id="page-campus-life" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Campus Life</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Clubs & Depts -->
+  <div id="page-clubs-depts" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Clubs & Depts</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Sports and Food -->
+  <div id="page-sports-food" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Sports and Food</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Contact Info -->
+  <div id="page-contact-info" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Contact Info</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Fests & Programs -->
+  <div id="page-fests-programs" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Fests & Programs</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Resources -->
+  <div id="page-resources" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Resources</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Misc -->
+  <div id="page-misc" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn" title="Back to Homepage">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title">Misc</h1>
+      <div class="sub-page-content">
+        <!-- Content will be added later -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 9. Detail Page (reused dynamically) -->
+  <div id="page-detail" class="sub-page">
+    <div class="sub-page-wrapper">
+      <img src="assets/letter.png" alt="Letter background" class="sub-page-bg" />
+      <button class="back-btn detail-back-btn" title="Back">
+        <span class="back-btn-arrow">◄</span> Back
+      </button>
+      <h1 class="sub-page-title" id="detail-title"></h1>
+      <div class="sub-page-content" id="detail-content"></div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS
+       ═══════════════════════════════════════════ -->
+  <script src="script.js"></script>
+
+</body>
+</html>

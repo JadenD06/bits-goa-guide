@@ -1,0 +1,572 @@
+/* ===================================================
+   BITS Goa Freshman Guide — Master Stylesheet
+   =================================================== */
+
+/* ---------- Google Font ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Press Start 2P', monospace;
+  background: #000;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ===================================================
+   PHASE 1 — RETRO BOOT SCREEN
+   =================================================== */
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a12;
+  transition: opacity 0.8s ease-out;
+}
+
+#boot-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Scanline overlay for CRT feel */
+#boot-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 1;
+}
+
+/* Logo */
+.boot-logo {
+  width: min(280px, 60vw);
+  height: auto;
+  image-rendering: auto;
+  margin-bottom: 32px;
+  animation: bootLogoIn 0.6s ease-out both;
+  filter: drop-shadow(0 0 18px rgba(80, 120, 255, 0.3));
+}
+
+@keyframes bootLogoIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Boot text */
+.boot-text {
+  color: #b0b0b0;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  text-align: center;
+  line-height: 1.8;
+  animation: blinkCursor 0.9s step-end infinite;
+}
+
+.boot-text span {
+  color: #6ec7ff;
+}
+
+@keyframes blinkCursor {
+  50% { border-right-color: transparent; }
+}
+
+/* Progress bar container — Win95 inset border */
+.progress-container {
+  width: min(320px, 70vw);
+  height: 28px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #c0c0c0;
+  padding: 3px;
+  position: relative;
+}
+
+/* Inner track — inset */
+.progress-track {
+  width: 100%;
+  height: 100%;
+  border: 2px solid;
+  border-color: #404040 #dfdfdf #dfdfdf #404040;
+  background: #1a1a2e;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fill bar */
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: repeating-linear-gradient(
+    90deg,
+    #000080 0px,
+    #000080 10px,
+    #0000a0 10px,
+    #0000a0 12px
+  );
+  transition: width 0.1s linear;
+}
+
+/* Percentage text */
+.progress-percent {
+  color: #6ec7ff;
+  font-size: 8px;
+  margin-top: 12px;
+  letter-spacing: 2px;
+}
+
+/* Status line at bottom */
+.boot-status {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #555;
+  font-size: 7px;
+  text-align: center;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* ===================================================
+   PHASE 2 — MAIN HOMEPAGE
+   =================================================== */
+#homepage {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  /* Will be set to flex when active */
+  align-items: center;
+  justify-content: center;
+  background: #1a3a5c;
+  overflow: hidden;
+}
+
+#homepage.active {
+  display: flex;
+}
+
+/*
+ * The wrapper locks to exactly 9:16 so the image and hotspot layer
+ * always share the same coordinate space — no object-fit math needed.
+ */
+.homepage-wrapper {
+  position: relative;
+  /* Fill the screen, but never exceed 9:16 */
+  width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  max-width: calc(100vh * 9 / 16);   /* on wide screens, shrink width */
+  aspect-ratio: 9 / 16;
+  margin: auto;                       /* center on desktop */
+  overflow: hidden;
+}
+
+.homepage-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;   /* safe: wrapper is already the same aspect ratio */
+  display: block;
+  z-index: 0;
+}
+
+/* Hotspot overlay — exactly the same box as the image */
+.hotspot-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Individual hotspot */
+.hotspot {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  /* Debug: uncomment to see hotspot zones */
+  /* background: rgba(255, 0, 0, 0.2); */
+  /* border: 1px solid red; */
+}
+
+.hotspot:hover,
+.hotspot:active {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 20px rgba(255, 220, 100, 0.35),
+              inset 0 0 10px rgba(255, 220, 100, 0.15);
+}
+
+.hotspot:active {
+  transform: scale(0.96);
+}
+
+/* Subtle pulsing glow on bottles to hint interactivity */
+.hotspot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  animation: hotspotPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hotspotPulse {
+  0%, 100% {
+    border-color: transparent;
+    box-shadow: none;
+  }
+  50% {
+    border-color: rgba(255, 220, 130, 0.25);
+    box-shadow: 0 0 12px rgba(255, 220, 130, 0.15);
+  }
+}
+
+/* Stagger the pulse animation */
+.hotspot:nth-child(1)::after { animation-delay: 0s; }
+.hotspot:nth-child(2)::after { animation-delay: 0.3s; }
+.hotspot:nth-child(3)::after { animation-delay: 0.6s; }
+.hotspot:nth-child(4)::after { animation-delay: 0.9s; }
+.hotspot:nth-child(5)::after { animation-delay: 1.2s; }
+.hotspot:nth-child(6)::after { animation-delay: 1.5s; }
+.hotspot:nth-child(7)::after { animation-delay: 1.8s; }
+.hotspot:nth-child(8)::after { animation-delay: 2.1s; }
+
+/* ===================================================
+   PHASE 3 — SUB-PAGES
+   =================================================== */
+.sub-page {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #3d2b1f;
+  overflow: hidden;
+  animation: subPageIn 0.35s ease-out both;
+}
+
+.sub-page.active {
+  display: flex;
+}
+
+@keyframes subPageIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Letter background image */
+.sub-page-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  max-width: calc(100vh * 9 / 16);
+  aspect-ratio: 9 / 16;
+  margin: auto;
+  overflow: hidden;
+}
+
+.sub-page-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  z-index: 0;
+}
+
+/* Sub-page title overlay */
+.sub-page-title {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #5a3e28;
+  font-size: clamp(10px, 3vw, 16px);
+  text-align: center;
+  text-shadow: 1px 1px 0 rgba(255, 240, 200, 0.5);
+  z-index: 10;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  max-width: 90%;
+  white-space: nowrap;
+  animation: titleFadeIn 0.5s ease-out both,
+             titleGlow 2.2s ease-in-out 0.5s infinite;
+}
+
+@keyframes titleFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 1px 1px 0 rgba(255, 240, 200, 0.5),
+                 0 0 6px rgba(255, 200, 110, 0.4),
+                 0 0 10px rgba(255, 180, 80, 0.2);
+  }
+  50% {
+    text-shadow: 1px 1px 0 rgba(255, 240, 200, 0.5),
+                 0 0 12px rgba(255, 200, 110, 0.8),
+                 0 0 22px rgba(255, 180, 80, 0.5);
+  }
+}
+
+/* Content area — where user will add details later */
+.sub-page-content {
+  position: absolute;
+  top: 26%;
+  left: 15%;
+  right: 15%;
+  bottom: 15%;
+  z-index: 5;
+  /* Empty for now — user will add content here */
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Back button */
+.back-btn {
+  position: absolute;
+  top: 3.5%;
+  left: 5%;
+  z-index: 20;
+  background: #6b4c32;
+  border: 3px solid;
+  border-color: #8b6b4f #3d2b1f #3d2b1f #8b6b4f;
+  color: #f0e0c0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 2vw, 10px);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 2px 2px 0 #2a1a0e;
+}
+
+.back-btn:hover {
+  background: #7d5a3c;
+  border-color: #a07858 #4a3022 #4a3022 #a07858;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 #2a1a0e;
+}
+
+.back-btn:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 #2a1a0e;
+  border-color: #3d2b1f #8b6b4f #8b6b4f #3d2b1f;
+}
+
+.back-btn-arrow {
+  font-size: clamp(10px, 2.5vw, 14px);
+  line-height: 1;
+}
+
+/* ===================================================
+   TRANSITION OVERLAY — 8-bit pixel canvas
+   =================================================== */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: transparent;   /* canvas draws the colour */
+  opacity: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.page-transition.active {
+  pointer-events: all;
+}
+
+#transition-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===================================================
+   RESPONSIVE ADJUSTMENTS
+   =================================================== */
+
+/* Very small screens */
+@media (max-width: 320px) {
+  .boot-logo {
+    width: 200px;
+  }
+  .progress-container {
+    width: 240px;
+  }
+  .boot-text {
+    font-size: 7px;
+  }
+}
+
+/* Tablet landscape */
+@media (min-width: 768px) and (orientation: landscape) {
+  .boot-logo {
+    width: 250px;
+  }
+}
+
+/* ===================================================
+   HEADING BUTTONS (inside sub-pages)
+   =================================================== */
+.heading-btn {
+  display: block;
+  width: 100%;
+  background: rgba(107, 76, 50, 0.15);
+  border: 2px solid;
+  border-color: #8b6b4f #3d2b1f #3d2b1f #8b6b4f;
+  color: #3d2010;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1.8vw, 9px);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.6;
+  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0 rgba(61, 43, 31, 0.3);
+  border-radius: 4px;
+}
+
+.heading-btn:hover {
+  background: rgba(107, 76, 50, 0.28);
+  border-color: #a07858 #4a3022 #4a3022 #a07858;
+  transform: translateX(3px);
+  box-shadow: 3px 3px 0 rgba(61, 43, 31, 0.4);
+}
+
+.heading-btn:active {
+  transform: translateX(1px) translateY(1px);
+  box-shadow: 1px 1px 0 rgba(61, 43, 31, 0.3);
+}
+
+/* ===================================================
+   DETAIL PAGE CONTENT STYLES
+   =================================================== */
+#detail-content p {
+  color: #3d2010;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1.6vw, 8px);
+  line-height: 2;
+  margin-bottom: 14px;
+  top: 36%; 
+}
+
+#detail-title {
+  font-size: clamp(8px, 2.2vw, 12px);
+  line-height: 1.5;
+  top: 22%; 
+}
+
+.detail-link {
+  color: #5a2d00;
+  text-decoration: underline;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1.6vw, 8px);
+}
+
+.detail-link:hover {
+  color: #8b4500;
+}
+
+#page-detail .sub-page-title {
+  top: 22%;
+}
+
+#page-detail .sub-page-content {
+  top: 16%;
+}
+
+
+/* ===================================================
+   SCROLLBAR STYLING (for sub-page content later)
+   =================================================== */
+.sub-page-content::-webkit-scrollbar {
+  width: 6px;
+}
+.sub-page-content::-webkit-scrollbar-track {
+  background: rgba(90, 62, 40, 0.1);
+  border-radius: 3px;
+}
+.sub-page-content::-webkit-scrollbar-thumb {
+  background: rgba(90, 62, 40, 0.35);
+  border-radius: 3px;
+}
+
+.heading-btn[data-heading="TEDxBITSGoa"] {
+  background: rgba(20, 0, 0, 0.85);
+  border-color: #cc0000 #660000 #660000 #cc0000;
+  color: #cc0000;
+}
+
+.heading-btn[data-heading="TEDxBITSGoa"]:hover {
+  background: rgba(40, 0, 0, 0.95);
+  border-color: #ff2222 #880000 #880000 #ff2222;
+  color: #ff4444;
+}
+
+.heading-btn[data-heading="TEDxBITSGoa"] {
+  background: rgba(20, 0, 0, 0.85);
+  border-color: #cc0000 #660000 #660000 #cc0000;
+  color: #cc0000;
+  box-shadow: 0 0 8px rgba(204, 0, 0, 0.6),
+              inset 0 0 6px rgba(204, 0, 0, 0.2);
+  animation: tedxGlow 1.8s ease-in-out infinite;
+}
+
+.heading-btn[data-heading="TEDxBITSGoa"]:hover {
+  background: rgba(40, 0, 0, 0.95);
+  border-color: #ff2222 #880000 #880000 #ff2222;
+  color: #ff4444;
+  box-shadow: 0 0 16px rgba(255, 30, 30, 0.9),
+              inset 0 0 10px rgba(255, 30, 30, 0.3);
+}
+
+@keyframes tedxGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(204, 0, 0, 0.6), inset 0 0 6px rgba(204, 0, 0, 0.2); }
+  50%       { box-shadow: 0 0 18px rgba(204, 0, 0, 0.95), inset 0 0 10px rgba(204, 0, 0, 0.35); }
+}
+
+#page-detail .sub-page-content {
+  bottom: 22%;
+}
